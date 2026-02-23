@@ -25,6 +25,3 @@ Run the backend: `mvn clean install` then `mvn spring-boot:run`
 Go to the `frontend` folder, run `npm install`, then `npm start` to start React.  
 Open `http://localhost:3000`
 
----
-
-Made this as part of my learning and fun with Java + React. Any feedback or tips are welcome!
