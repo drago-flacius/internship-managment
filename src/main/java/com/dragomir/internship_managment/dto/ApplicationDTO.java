@@ -14,7 +14,6 @@ public class ApplicationDTO {
     private ApplicationStatus status;
     private String appliedAt;
     private String coverLetter;
-    private String studentCvUrl;
     private String studentName;
     private Long internshipId;
     private String internshipTitle;

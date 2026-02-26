@@ -50,9 +50,9 @@ public class InternshipService {
         Pageable pageable = PageRequest.of(page - 1, limit);
 
         // Ako je STUDENT, filtriraj samo APPROVED
-        String status = isStudent ? "APPROVED" : null;
+        InternshipStatus status = isStudent ? InternshipStatus.APPROVED : null;
 
-        return internshipRepository.findFilteredInternships(
+        return internshipRepository.getFilteredInternships(
                 search,
                 location,
                 company,
@@ -88,7 +88,7 @@ public class InternshipService {
     }
 
     public Internship approve(Long id, Authentication auth) {
-            return null;
+        return null;
     }
 
     public Internship reject(Long id, Authentication auth) {

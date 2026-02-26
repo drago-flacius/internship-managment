@@ -1,7 +1,9 @@
 package com.dragomir.internship_managment.service;
 
 import com.dragomir.internship_managment.controller.StudentController;
+import com.dragomir.internship_managment.domain.Application;
 import com.dragomir.internship_managment.domain.Student;
+import com.dragomir.internship_managment.dto.ApplicationDTO;
 import com.dragomir.internship_managment.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -17,7 +19,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -35,95 +39,40 @@ public class StudentService {
     }
 
     public void updateStudent(Student student) {
-    }
-    // pravimo transakciju - ne cuvamo fajl na disk ako ne uspe cuvanje u bazi
-    @Transactional
-    public Map<String, Object> saveCV(String email, MultipartFile file) throws IOException {
-
-
-        Student student = studentRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-
-        // for reupload, delete the already existing pdf
-        if(student.getCvFilePath() != null){
-            deleteStudentCV(email);
-        }
-
-        // generate unique filename
-        String filename = file.getOriginalFilename();
-        String cvPath = "/" + filename;
-
-
-        student.setCvFilePath(cvPath);
-        student.setCvFileName(file.getOriginalFilename());
-        student.setCvUploadDate(LocalDateTime.now());
         studentRepository.save(student);
-
-        // save file only after db commit
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-        Path filePath = uploadPath.resolve(filename);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        Map<String, Object> cvInfo = new HashMap<>();
-        cvInfo.put("filename", file.getOriginalFilename());
-        cvInfo.put("url", student.getCvFilePath());
-        cvInfo.put("uploadDate", student.getCvUploadDate());
-
-        return cvInfo;
     }
 
-    public void deleteStudentCV(String name) {
-        Student student = studentRepository.findByEmail(name)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        if(student.getCvFilePath() != null){
-            Path filePath = Paths.get(uploadDir).resolve(Paths.get(student.getCvFilePath()).getFileName());
-            try {
-                Files.deleteIfExists(filePath);
-            }   catch(IOException e) {
-                System.out.println(" Failed to delete file" + e.getMessage());
-
-
-            }
-
-            student.setCvFilePath(null);
-            student.setCvFileName(null);
-            student.setCvUploadDate(null);
-
-            // update DB again
-            studentRepository.save(student);
-        }
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
     }
 
-    private Resource loadCV(Student student) throws IOException {
-        if (student.getCvFilePath() == null) {
-            throw new RuntimeException("CV not found");
-        }
-
-        Path filePath = Paths.get(uploadDir, student.getCvFilePath());
-        Resource resource = new UrlResource(filePath.toUri());
-
-        if (!resource.exists() || !resource.isReadable()) {
-            throw new RuntimeException("Could not read file");
-        }
-
-        return resource;
-    }
-
-
-    public Resource getStudentCV(String email) throws IOException {
-        Student student = studentRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-        return loadCV(student);
-    }
-
-
-    public Resource getStudentCVByStudentId(Long studentId) throws IOException {
+    public List<ApplicationDTO> getStudentApplications(Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-        return loadCV(student);
+
+        return student.getApplications().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
+    private ApplicationDTO mapToDTO(Application app) {
+        ApplicationDTO dto = new ApplicationDTO();
+
+        dto.setId(app.getId());
+        dto.setStudentId(app.getStudent().getId());
+        dto.setStatus(app.getStatus());
+        dto.setAppliedAt(app.getAppliedAt().toString());
+        dto.setCoverLetter(app.getCoverLetter());
+        dto.setStudentName(app.getStudent().getFirstName() + " " + app.getStudent().getLastName());
+        dto.setInternshipId(app.getInternship().getId());
+        dto.setInternshipTitle(app.getInternship().getTitle());
+        dto.setInternshipCompanyName(app.getInternship().getCompany().getCompanyName());
+        dto.setInternshipDescription(app.getInternship().getDescription());
+        dto.setInternshipLocation(app.getInternship().getLocation());
+        dto.setInternshipDuration(app.getInternship().getDurationWeeks());
+        dto.setInternshipSalary(app.getInternship().getSalary());
+        dto.setInternshipPaid(app.getInternship().getIsPaid());
+
+        return dto;
+    }
 }

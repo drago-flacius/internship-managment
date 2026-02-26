@@ -81,9 +81,7 @@ public class ApplicationService {
                 app.getStatus(),
                 app.getAppliedAt().toString(),
                 app.getCoverLetter(),
-                student.getCvFilePath(),
                 student.getFirstName() + " " + student.getLastName(),
-
                 app.getInternship().getId(),
                 app.getInternship().getTitle(),
                 app.getInternship().getCompany().getCompanyName(),
@@ -108,9 +106,7 @@ public class ApplicationService {
                 app.getStatus(),
                 app.getAppliedAt().toString(),
                 app.getCoverLetter(),
-                app.getStudent().getCvFilePath(),
                 app.getStudent().getFirstName() + " " + app.getStudent().getLastName(),
-
                 app.getInternship().getId(),
                 app.getInternship().getTitle(),
                 app.getInternship().getCompany().getCompanyName(),
@@ -153,4 +149,3 @@ public class ApplicationService {
     }
 
 }
-

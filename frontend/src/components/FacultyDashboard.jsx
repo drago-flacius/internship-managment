@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import PendingInternships from "./PendingInternships";
 import PendingApplications from "./PendingApplications";
 import CompaniesOverview from "./CompaniesOverview";
+import StudentsOverview from "./StudentsOverview";
 
 export default function FacultyDashboard() {
   const { logout } = useAuth();
@@ -50,7 +51,7 @@ export default function FacultyDashboard() {
           <Route path="/" element={<FacultyHome />} />
           <Route path="internships" element={<PendingInternships />} />
           <Route path="applications" element={<PendingApplications />} />
-          <Route path="students" element={<Students />} />
+          <Route path="students" element={<StudentsOverview />} />
           <Route path="companies" element={<CompaniesOverview />} />
           <Route path="*" element={<Navigate to="/faculty/dashboard" replace />} />
         </Routes>
