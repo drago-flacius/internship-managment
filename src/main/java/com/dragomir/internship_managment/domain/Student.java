@@ -43,14 +43,7 @@ public class Student extends User {
     @Column(name = "skills", length = 1000)
     private String skills; //
 
-    @Column(name ="cv_file_path", length = 500)
-    private String cvFilePath;
 
-    @Column(name = "cv_file_name", length = 500)
-    private String cvFileName;
-
-    @Column(name = "cv_upload_date")
-    private LocalDateTime cvUploadDate;
 
 
 

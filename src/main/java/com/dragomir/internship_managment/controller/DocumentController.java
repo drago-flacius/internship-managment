@@ -22,7 +22,7 @@ public class DocumentController {
     private final DocumentService documentService;
 
     // STUDENT uploads THEIR diary
-    @PostMapping("c")
+    @PostMapping("/{studentId}/diary")
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<Void> uploadDiary(
             @PathVariable  Long studentId,
@@ -66,11 +66,21 @@ public class DocumentController {
     public ResponseEntity<Resource> downloadCV(@PathVariable Long studentId) throws IOException {
         Resource resource = documentService.downloadCV(studentId);
 
-        // Return the file as attachment
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(resource);
+    }
+
+    @GetMapping("/{studentId}/cv/meta")
+    public ResponseEntity<ApiResponse> getCVMetadata(@PathVariable Long studentId) {
+        Map<String, Object> metadata = documentService.getCVMetadata(studentId);
+
+        if (metadata == null) {
+            return ResponseEntity.ok(new ApiResponse(true, "No CV uploaded", null));
+        }
+
+        return ResponseEntity.ok(new ApiResponse(true, "CV metadata fetched", metadata));
     }
 }

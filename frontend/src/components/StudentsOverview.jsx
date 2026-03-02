@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 const API_URL = "http://localhost:8080";
 
 export default function Students() {
-    const { token } = useAuth();
+    const { token, hasRole } = useAuth();
     const [students, setStudents] = useState([]);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [applications, setApplications] = useState([]);
@@ -29,6 +29,26 @@ export default function Students() {
         };
         fetchStudents();
     }, [token]);
+
+    const downloadDiary = async (studentId) => {
+        try {
+            const res = await fetch(`${API_URL}/documents/${studentId}/diary`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error('Failed to download diary');
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'internship-diary.pdf';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     // Fetch applications for selected student
     const fetchApplications = async (studentId) => {
@@ -69,7 +89,22 @@ export default function Students() {
             <div className="w-2/3 bg-white border rounded-lg p-4 shadow-sm">
                 {selectedStudent ? (
                     <>
-                        <h3 className="text-xl font-semibold mb-4">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-semibold">
+                                {selectedStudent.firstName} {selectedStudent.lastName}
+                            </h3>
+                            {/* download diary button shown only to faculty */}
+                            {/**/}
+                            {token && selectedStudent && hasRole("FACULTY") && (
+                                <button
+                                    onClick={() => downloadDiary(selectedStudent.id)}
+                                    className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                                >
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    Preuzmi dnevnik
+                                </button>
+                            )}
+                        </div>
 
                         {applicationsLoading ? (
                             <p className="text-gray-500">Učitavanje prijava...</p>
@@ -78,11 +113,10 @@ export default function Students() {
                                 {applications.map(app => (
                                     <div key={app.id} className="py-3 flex justify-between items-center px-2 hover:bg-gray-50">
                                         <span className="text-gray-900">{app.internshipTitle}</span>
-                                        <span className={`text-sm font-medium ${
-                                            app.status === "APPROVED" ? "text-green-600" :
+                                        <span className={`text-sm font-medium ${app.status === "APPROVED" ? "text-green-600" :
                                             app.status === "REJECTED" ? "text-red-600" :
-                                            "text-gray-600"
-                                        }`}>
+                                                "text-gray-600"
+                                            }`}>
                                             {app.status}
                                         </span>
                                     </div>

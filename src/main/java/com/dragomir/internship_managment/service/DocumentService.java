@@ -66,7 +66,7 @@ public class DocumentService {
         deleteDocument(student, DocumentType.DIARY);
     }
 
-  
+
 
     private Student getStudentById(Long studentId) {
         return studentRepository.findById(studentId)
@@ -102,7 +102,7 @@ public class DocumentService {
 
         Map<String, Object> info = new HashMap<>();
         info.put("fileName", file.getOriginalFilename());
-        info.put("uploadedAt", document.getUploadedAt());
+        info.put("uploadedAt", document.getUploadedAt().toString());
         info.put("type", type.name());
 
         return info;
@@ -132,5 +132,19 @@ public class DocumentService {
         Files.deleteIfExists(filePath);
 
         documentRepository.delete(document);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getCVMetadata(Long studentId) {
+        Student student = getStudentById(studentId);
+        StudentDocument document = documentRepository.findByStudentAndType(student, DocumentType.CV)
+                .orElse(null);
+
+        if (document == null) return null;
+
+        Map<String, Object> info = new HashMap<>();
+        info.put("filename", document.getFileName());
+        info.put("uploadedAt", document.getUploadedAt().toString());
+        return info;
     }
 }
