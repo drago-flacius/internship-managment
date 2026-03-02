@@ -1,6 +1,6 @@
 .env
 *.tar
-
+/src/resources/application.properties
 
 # --------------------------
 # Maven build
