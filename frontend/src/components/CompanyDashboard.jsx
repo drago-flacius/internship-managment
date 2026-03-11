@@ -1,5 +1,5 @@
 import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Building2, LogOut, Briefcase, PlusCircle, Users } from "lucide-react";
+import { Building2, LogOut, Briefcase, PlusCircle, Home } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import CompanyInternships from "./CompanyInternships";
 import InternshipApplications from "./InternshipApplications";
@@ -38,7 +38,7 @@ export default function CompanyDashboard() {
       {/* TABS */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto flex gap-4 px-6 py-3">
-          <TabLink label="Početna" to="/company/dashboard" icon={Building2} />
+          <TabLink label="Početna" to="/company/dashboard" icon={Home} />
           <TabLink label="Moje prakse" to="/company/dashboard/internships" icon={Briefcase} />
           <TabLink label="Kreiraj praksu" to="/company/dashboard/create" icon={PlusCircle} />
         </div>
@@ -49,8 +49,8 @@ export default function CompanyDashboard() {
         <Routes>
           <Route path="/" element={<CompanyHome />} />
           <Route path="internships" element={<CompanyInternships />} />
-          <Route path="internships/:id/applications" element={<InternshipApplications/>} /> 
-          <Route path="create" element={<CreateInternship />} /> 
+          <Route path="internships/:id/applications" element={<InternshipApplications />} />
+          <Route path="create" element={<CreateInternship />} />
           <Route path="*" element={<Navigate to="/company/dashboard" replace />} />
         </Routes>
       </div>

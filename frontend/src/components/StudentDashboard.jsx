@@ -1,13 +1,15 @@
 import { Link, Routes, Route, Navigate } from "react-router-dom";
-import { Users, LogOut, Home, Briefcase, Mail, Clipboard } from "lucide-react";
+import { Users, LogOut, Home, Briefcase, Mail, Clipboard, BookOpen } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import BrowseInternships from "./BrowseInternships";
 import StudentProfile from "./StudentProfile";
 import InternshipDetails from "./IntenshipDetails";
 import StudentApplications from "./StudentApplications";
+import StudentDiaryUpload from "./StudenDiaryUpload";
+import MyAcceptedInternship from "./MyAcceptedInternship";
 
 export default function StudentDashboard() {
-  const { logout } = useAuth(null);
+  const { logout, user } = useAuth(null); // pretpostavljam da user sadrži studentId
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,6 +36,7 @@ export default function StudentDashboard() {
           <TabLink label="Početna" icon={Home} to="/student/dashboard" />
           <TabLink label="Pretraži prakse" icon={Briefcase} to="/student/dashboard/browse" />
           <TabLink label="Moje prijave" icon={Clipboard} to="/student/dashboard/applications" />
+          <TabLink label="Moja Praksa" icon={BookOpen} to="/student/dashboard/my-internship" />
           <TabLink label="Profil" icon={Users} to="/student/dashboard/profile" />
         </div>
       </div>
@@ -41,10 +44,11 @@ export default function StudentDashboard() {
       {/* CONTENT */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage studentId={user?.id} />} />
           <Route path="browse" element={<BrowseInternships />} />
           <Route path="browse/:id" element={<InternshipDetails />} />
           <Route path="applications" element={<StudentApplications />} />
+          <Route path="my-internship" element={<MyAcceptedInternship />} />
           <Route path="profile" element={<StudentProfile />} />
           <Route path="*" element={<Navigate to="/student/dashboard" replace />} />
         </Routes>
@@ -65,17 +69,19 @@ function TabLink({ label, icon: Icon, to }) {
   );
 }
 
-function HomePage() {
+function HomePage({ studentId }) {
   return (
-    <div className="text-center py-16">
-      <h2 className="text-3xl font-bold text-gray-900 mb-4">
-        Dobrodošli
-      </h2>
-      <p className="text-gray-600">
-        Ovde možete pregledati dostupne prakse i pratiti svoje prijave.
-      </p>
+    <div className="space-y-8">
+      {/* Dobrodošlica */}
+      <div className="text-center py-16">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Dobrodošli
+        </h2>
+        <p className="text-gray-600">
+          Ovde možete pregledati dostupne prakse i pratiti svoje prijave.
+        </p>
+      </div>
+
     </div>
   );
 }
-
-

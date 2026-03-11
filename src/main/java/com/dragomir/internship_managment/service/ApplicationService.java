@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,6 +147,32 @@ public class ApplicationService {
         }
 
         return repo.save(app);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<ApplicationDTO> getAcceptedApplication(String email) {
+        return repo.findAcceptedByStudentEmail(email)
+                .map(this::convertToDTO);
+    }
+
+    private ApplicationDTO convertToDTO(Application app) {
+        ApplicationDTO dto = new ApplicationDTO();
+        dto.setId(app.getId());
+        dto.setStatus(app.getStatus());
+        dto.setAppliedAt(app.getAppliedAt().toString());
+        dto.setCoverLetter(app.getCoverLetter());
+
+        dto.setStudentId(app.getStudent().getId());
+        dto.setStudentName(app.getStudent().getFullName());
+
+        var internship = app.getInternship();
+        dto.setInternshipId(internship.getId());
+        dto.setInternshipTitle(internship.getTitle()); // ili .getTitle()
+        dto.setInternshipCompanyName(internship.getCompany().getCompanyName());
+        dto.setInternshipDescription(internship.getDescription());
+        dto.setInternshipLocation(internship.getLocation());
+
+        return dto;
     }
 
 }

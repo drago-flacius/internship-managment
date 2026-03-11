@@ -10,7 +10,8 @@ public class StudentDocument {
     @Id
     @GeneratedValue
     private Long id;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
     @Enumerated(EnumType.STRING)
     private DocumentType type;

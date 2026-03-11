@@ -1,5 +1,5 @@
 import { Link, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { Users, LogOut, CheckCircle, FileText, Building2 } from "lucide-react";
+import { Users, LogOut, Home, Building2, Hourglass, Timer } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import PendingInternships from "./PendingInternships";
 import PendingApplications from "./PendingApplications";
@@ -37,9 +37,9 @@ export default function FacultyDashboard() {
       {/* TABS */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto flex gap-4 px-6 py-3">
-          <TabLink label="Početna" to="/faculty/dashboard" icon={Users} />
-          <TabLink label="Prakse na čekanju" to="/faculty/dashboard/internships" icon={CheckCircle} />
-          <TabLink label="Prijave na čekanju" to="/faculty/dashboard/applications" icon={FileText} />
+          <TabLink label="Početna" to="/faculty/dashboard" icon={Home} />
+          <TabLink label="Prakse na čekanju" to="/faculty/dashboard/internships" icon={Hourglass} />
+          <TabLink label="Prijave na čekanju" to="/faculty/dashboard/applications" icon={Timer} />
           <TabLink label="Studenti" to="/faculty/dashboard/students" icon={Users} />
           <TabLink label="Kompanije" to="/faculty/dashboard/companies" icon={Building2} />
         </div>

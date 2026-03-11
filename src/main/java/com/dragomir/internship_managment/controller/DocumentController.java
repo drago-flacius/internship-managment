@@ -5,6 +5,7 @@ import com.dragomir.internship_managment.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,12 +25,13 @@ public class DocumentController {
     // STUDENT uploads THEIR diary
     @PostMapping("/{studentId}/diary")
     @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<Void> uploadDiary(
+    public ResponseEntity<ApiResponse> uploadDiary(
             @PathVariable  Long studentId,
             @RequestParam("file") MultipartFile file
     ) throws IOException {
         documentService.uploadDiary(studentId, file);
-        return ResponseEntity.ok().build();
+        ApiResponse response = new ApiResponse(true, "Dnevnik uspešno posavljen !");
+        return ResponseEntity.ok(response);
     }
 
 

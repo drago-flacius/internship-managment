@@ -4,12 +4,14 @@ import com.dragomir.internship_managment.domain.Application;
 import com.dragomir.internship_managment.domain.Student;
 import com.dragomir.internship_managment.dto.ApiResponse;
 import com.dragomir.internship_managment.dto.ApplicationDTO;
+import com.dragomir.internship_managment.service.ApplicationService;
 import com.dragomir.internship_managment.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/students")
@@ -17,9 +19,10 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
-
-    public StudentController(StudentService userService) {
+    private final ApplicationService applicationService;
+    public StudentController(StudentService userService, ApplicationService applicationService) {
         this.studentService = userService;
+        this.applicationService = applicationService;
     }
 
 
@@ -56,6 +59,19 @@ public class StudentController {
                                                             Authentication authentication) {
         studentService.updateStudent(updatedStudent);
         return ResponseEntity.ok(new ApiResponse(true, "Profile updated", updatedStudent));
+    }
+
+    @GetMapping("/me/accepted-application")
+    public ResponseEntity<?> getMyInternship(Authentication authentication) {
+        String email = authentication.getName();
+
+        Optional<ApplicationDTO> acceptedApplication = applicationService.getAcceptedApplication(email);
+
+        if (acceptedApplication.isPresent()) {
+            return ResponseEntity.ok(new ApiResponse(true, "Uspesno vracema prihvacena prijava" ,acceptedApplication));
+        } else {
+            return ResponseEntity.status(404).body(new ApiResponse(false, "Nemate prihvacenu praksu"));
+        }
     }
 
 
